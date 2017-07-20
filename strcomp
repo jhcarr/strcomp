@@ -1,0 +1,102 @@
+#! /bin/bash
+
+### STRCOMP
+### Justin Carr : 3/9/2017
+### A half-baked solution to configuration comparison
+
+## Globals
+debug=false;
+
+string1="";
+string2="";
+length1=0;
+length2=0;
+
+## Function Definitions
+function printUsage(){
+    echo "strcomp : String Compare";
+    echo;
+    echo "USAGE:"
+    echo "    strcomp string1 string2";
+    echo;
+    echo "String Compare will pretty-print information comparing string arguments string1 & string2.";
+    echo;
+}
+
+function printNotMatching(){
+    echo "Arguments do not match.";
+    echo "=======================";
+    echo $1;
+}
+
+function printMatching(){
+    echo "Arguments match.";
+    echo;
+}
+
+function compareLength(){
+    
+    if (( $length1 < $length2 ))
+    then
+	compareContent $string2 $string1 $length1;
+	return;
+    fi
+    compareContent $string1 $string2 $length2;
+}
+
+function compareContent(){
+
+    zeroIndexSize=$(($3-1));
+    marker="";
+    matchingLen=0;
+    for i in `seq 0 $zeroIndexSize`; do
+	char1=${1:i:1}
+	char2=${2:i:1}
+
+	if $debug
+	then
+	    echo "******************";
+	    echo "($i) char1: $char1";
+	    echo "($i) char2: $char2";
+	fi
+
+	if [[ $char1 == $char2 ]]
+	then
+	    matchingLen=$((matchingLen+1));
+	    marker=$marker"-";
+	else
+	    break;
+	fi
+    done
+    marker=$marker"X";
+
+    if (( $matchingLen == $length1 && $matchingLen == $length2 ))
+    then
+	printMatching;
+	exit 0;
+    else
+	printNotMatching "First mismatch occurs at: $matchingLen";
+	echo;
+	echo $2;
+	echo $marker;
+	echo $1;
+	echo;
+    fi
+}
+
+## Main
+echo "";
+if [[ -z $1 || -z $2 || ! -z $3 ]]
+   then
+       printUsage;
+       exit 0;
+fi
+
+string1=$1;
+string2=$2;
+length1=${#string1};
+length2=${#string2};
+
+compareLength;
+
+exit 0;
