@@ -2,7 +2,6 @@
 
 ### STRCOMP
 ### Justin Carr : 3/9/2017
-### A half-baked solution to configuration comparison
 
 ## Globals
 debug=false;
